@@ -7,9 +7,7 @@ const productRoutes = require('./api/routes/products');
 const orderRoutes = require('./api/routes/orders');
 const mongoose = require('mongoose');
 
-mongoose.connection('mongodb+srv://simiyey392:hJaaWlhcrYTRurDN@shop-app.r9zcdpg.mongodb.net/', { 
-  useMongoClient: true
-})
+mongoose.connect('mongodb://localhost:27017/Ecomm-ShAPI ')
 
 app.use(morgan('dev'))
 app.use(bodyParser.urlencoded({extended:false}))

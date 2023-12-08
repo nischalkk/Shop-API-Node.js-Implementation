@@ -5,6 +5,8 @@ const mongoose=require('mongoose')
 const Product = require('../models/products')
 
 router.get('/', (req,res,next) =>{
+    res.send(Product.find({}))
+    console.log(Product.find())
     res.status(200).json({
         message:"Handling GET requests to /products"
     });
@@ -32,7 +34,7 @@ router.get('/:productId',(req,res,next) =>{
         res.status(200).json({doc})
     })
     .catch(err=>{console.log(err);
-    res.status(500).json({error:err})});
+    res.status(500).json({error:err})})
 
 })
 
@@ -43,10 +45,10 @@ router.patch('/:productId',(req,res,next) =>{
 })
 
 router.delete('/:productId',(req,res,next) =>{
-    res.status(200).json({
-        message:'Delete Product Id'
+    Product.deleteOne({_id:req.params.productId}).then(result=>{
+        console.log("Deleted Product ",result);
     })
+    .catch(err => console.log(err))
 })
-
 
 module.exports = router;
