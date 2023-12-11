@@ -5,11 +5,10 @@ const mongoose=require('mongoose')
 const Product = require('../models/products')
 
 router.get('/', (req,res,next) =>{
-    res.send(Product.find({}))
-    console.log(Product.find())
-    res.status(200).json({
-        message:"Handling GET requests to /products"
-    });
+    Product.find().then((resi)=>{
+        res.json({resi})
+    })
+    
 });
 
 router.post('/', (req,res,next) =>{
@@ -31,7 +30,11 @@ router.get('/:productId',(req,res,next) =>{
     .exec()
     .then(doc=>{
         console.log(doc);
-        res.status(200).json({doc})
+        if(doc){
+            res.status(200).json({doc})
+        }else{
+            res.status(404).send("Invalid ID")
+        }
     })
     .catch(err=>{console.log(err);
     res.status(500).json({error:err})})
@@ -39,8 +42,22 @@ router.get('/:productId',(req,res,next) =>{
 })
 
 router.patch('/:productId',(req,res,next) =>{
-    res.status(200).json({
-        message:'Updated Product Id - ',id
+    const id = req.params.productId;
+    const updateOps = {};
+    for(const ops of req.body){
+        updateOps[ops.propName] = ops.value;
+    }
+    Product.update({_id: id}, {$set: updateOps})
+    .exec()
+    .then(result => {
+        console.log(result);
+        res.status(200).json(result);
+    })
+    .catch(err =>{
+        console.log(err);
+        res.status(500).json({
+            error:err
+        })
     })
 })
 
@@ -48,7 +65,7 @@ router.delete('/:productId',(req,res,next) =>{
     Product.deleteOne({_id:req.params.productId}).then(result=>{
         console.log("Deleted Product ",result);
     })
-    .catch(err => console.log(err))
+    .catch(err => console.log(err)) 
 })
 
 module.exports = router;
